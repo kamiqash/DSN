@@ -1,0 +1,12 @@
+This code is migrated to upgraded enviorment
+
+python 3.10.8
+Cudo 11.5
+Tensorflow 2.11
+Tensorflow-gpu 2.10.1
+
+-------------------
+Pillow
+Pandas
+Scipi
+
