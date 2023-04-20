@@ -27,10 +27,8 @@ from ML_Schemes import NN_FV
 from UtilityFuncs import Stats_Split_Non_Split
 
 import random
-def Depth1_CNN(loopidx,CTU_FLAG,MOTION_FLAG,CTU_NN_FLAG,rate_list,DBlist,PRINT_STATUS,PRINT_STATS,TestInfo,EPOCHS,outputFolder,SYSTEM,MULTI_CTU_FLAG,METHODOLOGY,PreDefinedTest,DEBUG,CTU_NN_Rate_Prev):
+def Depth1_CNN(loopidx,CTU_FLAG,MOTION_FLAG,CTU_NN_FLAG,rate_list,DBlist,PRINT_STATUS,PRINT_STATS,TestInfo,EPOCHS,outputFolder,MULTI_CTU_FLAG,METHODOLOGY,PreDefinedTest,DEBUG):
 
-    Record_Rates=[]
-    # LF_list=[29, 38] # Total LF images in Dataset
     LF_list = [28]  # Total LF images in Dataset
     counter=0
     for DB in DBlist:
@@ -52,14 +50,8 @@ def Depth1_CNN(loopidx,CTU_FLAG,MOTION_FLAG,CTU_NN_FLAG,rate_list,DBlist,PRINT_S
             #sys.path.append(pathDrive)
 
 
-            # if  (SYSTEM==1):
-            #     physical_devices = tf.config.list_physical_devices('GPU')
-            #     tf.config.experimental.set_memory_growth(physical_devices[0], True)
-            #     tf.config.experimental.set_memory_growth(physical_devices[1], True)
-
-            if (SYSTEM == 2):
-                physical_devices = tf.config.list_physical_devices('GPU')
-                tf.config.experimental.set_memory_growth(physical_devices[0], True)
+            physical_devices = tf.config.list_physical_devices('GPU')
+            tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
             if (PreDefinedTest):
                 # Pre defined three Test Images selected based on distribution of split and non split ratio
@@ -90,23 +82,8 @@ def Depth1_CNN(loopidx,CTU_FLAG,MOTION_FLAG,CTU_NN_FLAG,rate_list,DBlist,PRINT_S
                     randomTestData.append(str(ranvalue))
 
 
-            if SYSTEM == 3:
-                metaPath = '/content/' + rate + '_META/'
-                ctuPath = '/content/CTU/'
-
-            elif SYSTEM==1:
-                metaPath = '/home/realistic3d/WaqasAH/FastCodingWork/Dataset_HCI/Depth0/' + rate + '_META/'
-                ctuPath = '/home/realistic3d/WaqasAH/FastCodingWork/Dataset_HCI/Depth0/CTU/'
-                metaPath = 'D:\\CODECS\\FAST Coding\\Dataset\\' + DB + '\\Depth1\\META_' + rate + '\\'
-                ctuPath = 'D:\\CODECS\\FAST Coding\\Dataset\\' + DB + '\\Depth1\\CTU_' + rate + '\\'
-
-            elif SYSTEM==2:
-                # metaPath= 'C:\\Research Work\\FastCodingProject\\Dataset\\' +DB + '\\Depth1\\META_' + rate + '\\'
-                # ctuPath =  'C:\\Research Work\\FastCodingProject\\Dataset\\' +DB + '\\Depth1\\CTU_' + rate + '\\'
-                # metaPath = 'D:\\CODECS\\FAST Coding\\Dataset\\' + DB + '\\Depth1\\META_' + rate + '\\'
-                # ctuPath = 'D:\\CODECS\\FAST Coding\\Dataset\\' +DB + '\\Depth1\\CTU_' + rate + '\\'
-                ctuPath = 'C:\\PHD\\Dataset2022\\Depth1\\CTU_' + rate + '\\'
-                metaPath = 'C:\\PHD\\Dataset2022\\Depth1\\META_' + rate + '\\'
+            ctuPath = 'C:\\PHD\\Dataset2022\\Depth1\\CTU_' + rate + '\\'
+            metaPath = 'C:\\PHD\\Dataset2022\\Depth1\\META_' + rate + '\\'
             # Read 56 views out of 81 views
             Record=LoadFiftySixViewsDepth1(TotLF, ctuPath, metaPath, rate, PRINT_STATUS,METHODOLOGY,DB)
             Record_Rates.extend(Record)
@@ -169,8 +146,8 @@ def Depth1_CNN(loopidx,CTU_FLAG,MOTION_FLAG,CTU_NN_FLAG,rate_list,DBlist,PRINT_S
                                        y_col={'type': 'CurrSL'},
                                        batch_size=batch_size, input_size=IMAGE_SIZE_MCTU)
             else:
-                inputgenerator = generate_generator_FastCoding(train_datagen, train_df,IMAGE_SIZE,CTU_FLAG,CTU_NN_FLAG,MOTION_FLAG,CTU_NN_Rate_Prev,rate)
-                testgenerator = generate_generator_FastCoding(valid_datagen, validate_df,IMAGE_SIZE,CTU_FLAG,CTU_NN_FLAG,MOTION_FLAG,CTU_NN_Rate_Prev,rate)
+                inputgenerator = generate_generator_FastCoding(train_datagen, train_df,IMAGE_SIZE,CTU_FLAG,CTU_NN_FLAG,MOTION_FLAG,batch_size)
+                testgenerator = generate_generator_FastCoding(valid_datagen, validate_df,IMAGE_SIZE,CTU_FLAG,CTU_NN_FLAG,MOTION_FLAG,batch_size)
 
             # *******************************  [Network Defination]  **********************************
             if (MOTION_FLAG):
@@ -185,11 +162,6 @@ def Depth1_CNN(loopidx,CTU_FLAG,MOTION_FLAG,CTU_NN_FLAG,rate_list,DBlist,PRINT_S
 
             if (CTU_NN_FLAG):  # CTU + Feature vector case
                 z,InpArray=Basic_NN_CTU_FV_D0(img_input_shape,rate_input) # Basic NN CTU + Feature vector case
-                    # InpArray=[input_img]
-            elif CTU_NN_Rate_Prev:
-                rate_input_shape = (1,)
-                rate_input = Input(shape=rate_input_shape)
-                z, InpArray = Basic_NN_CTU_rate(img_input_shape, rate_input)
             elif (CTU_FLAG):# CTU only case
                 z,InpArray=Basic_NN_CTU_D0(img_input_shape) # Basic NN CTU only case
             elif (MULTI_CTU_FLAG):# CTU only case
@@ -217,12 +189,7 @@ def Depth1_CNN(loopidx,CTU_FLAG,MOTION_FLAG,CTU_NN_FLAG,rate_list,DBlist,PRINT_S
                     self.times.append(time.time() - self.epoch_time_start)
 
 
-            #time_callback = TimeHistory()
-
-            # Flags used in paper
-            # FLAGS_VALUE = 'Rate_' + rate + '_TEST_' + TestInfo + '_FLAGS_' + str(CTU_FLAG) + '_' + str(CTU_NN_FLAG)
-            # Flags used to add model
-            FLAGS_VALUE = 'Rate_' + rate + '_TEST_' + TestInfo + '_FLAGS_' + str(CTU_FLAG) + '_' + str(CTU_NN_FLAG) + '_' + str(CTU_NN_Rate_Prev)
+            FLAGS_VALUE = 'Rate_' + rate + '_TEST_' + TestInfo + '_FLAGS_' + str(CTU_FLAG) + '_' + str(CTU_NN_FLAG)
             print(FLAGS_VALUE)
 
             modelPath = pathDrive + FLAGS_VALUE + '_model_val_acc_best.h5'
@@ -236,8 +203,6 @@ def Depth1_CNN(loopidx,CTU_FLAG,MOTION_FLAG,CTU_NN_FLAG,rate_list,DBlist,PRINT_S
                                 callbacks=[checkpoint], verbose=1, validation_data=testgenerator,
                                 validation_steps=np.floor(len(validate_df) / batch_size))
 
-            # modelPath = pathDrive + FLAGS_VALUE + 'model_last_epoch.h5'
-            # model.save(modelPath)
 
             hist_df = pd.DataFrame(history.history)
             hist_csv_file = pathDrive + FLAGS_VALUE + 'Summary' + '.csv'

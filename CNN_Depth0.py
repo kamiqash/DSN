@@ -30,7 +30,7 @@ from ML_Schemes import Basic_NN_CTU_rate
 
 from UtilityFuncs import Stats_Split_Non_Split
 
-def Depth0_CNN(loopidx,CTU_FLAG,MOTION_FLAG,CTU_NN_FLAG,rate_list,DBlist,PRINT_STATUS,PRINT_STATS,TestInfo,EPOCHS,outputFolder,SYSTEM,MULTI_CTU_FLAG,METHODOLOGY,PreDefinedTest,DEBUG,CTU_NN_Rate_Prev):
+def Depth0_CNN(loopidx,CTU_FLAG,MOTION_FLAG,CTU_NN_FLAG,rate_list,DBlist,PRINT_STATUS,PRINT_STATS,TestInfo,EPOCHS,outputFolder,MULTI_CTU_FLAG,METHODOLOGY,PreDefinedTest,DEBUG):
     Record_Rates=[]
     LF_list=[29, 38] # Total LF images in Dataset
     counter=0
@@ -46,16 +46,9 @@ def Depth0_CNN(loopidx,CTU_FLAG,MOTION_FLAG,CTU_NN_FLAG,rate_list,DBlist,PRINT_S
 
             if not os.path.exists(pathDrive):
                 os.makedirs(pathDrive)
-            #sys.path.append(pathDrive)
 
-            # if  (SYSTEM==1):
-            #     physical_devices = tf.config.list_physical_devices('GPU')
-            #     tf.config.experimental.set_memory_growth(physical_devices[0], True)
-            #     tf.config.experimental.set_memory_growth(physical_devices[1], True)
-
-            if (SYSTEM == 2):
-                physical_devices = tf.config.list_physical_devices('GPU')
-                tf.config.experimental.set_memory_growth(physical_devices[0], True)
+            physical_devices = tf.config.list_physical_devices('GPU')
+            tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
             if(PreDefinedTest):
                 # Pre defined three Test Images selected based on distribution of split and non split ratio
@@ -85,30 +78,15 @@ def Depth0_CNN(loopidx,CTU_FLAG,MOTION_FLAG,CTU_NN_FLAG,rate_list,DBlist,PRINT_S
                     randomTestData.append(str(ranvalue))
 
             # Set the path for Datasets based on current enviorment
-            if SYSTEM == 3:
-                metaPath = '/content/' + rate + '_META/'
-                ctuPath = '/content/CTU/'
 
-            elif SYSTEM==1:
-                metaPath = '/home/realistic3d/WaqasAH/FastCodingWork/Dataset_HCI/Depth0/' + rate + '_META/'
-                ctuPath = '/home/realistic3d/WaqasAH/FastCodingWork/Dataset_HCI/Depth0/CTU/'
-                metaPath = 'D:\\CODECS\\FAST Coding\\Dataset\\' + DB + '\\Depth0\\' + rate + '_META\\'
-                ctuPath = 'D:\\CODECS\\FAST Coding\\Dataset\\' + DB + '\\Depth0\\CTU\\'
-
-            elif SYSTEM==2:
-                # metaPath= 'C:\\Research Work\\FastCodingProject\\Dataset\\' + DB + '\\Depth0\\' + rate + '_META\\'
-                # ctuPath =  'C:\\Research Work\\FastCodingProject\\Dataset\\'+ DB + '\\Depth0\\CTU\\'
-                # D:\\CODECS\\FAST\\Coding\\Dataset\\Depth0\\
-                # metaPath = 'D:\\CODECS\\FAST Coding\\Dataset\\' + DB + '\\Depth0\\' + rate + '_META\\'
-                # ctuPath = 'D:\\CODECS\\FAST Coding\\Dataset\\' + DB + '\\Depth0\\CTU\\'
-                ctuPath = 'C:\\PHD\\Dataset2022\\Depth0\\CTU\\'
-                metaPath = 'C:\\PHD\\Dataset2022\\Depth0\\' + rate + '_META\\'
+            ctuPath = 'C:\\PHD\\Dataset2022\\Depth0\\CTU\\'
+            metaPath = 'C:\\PHD\\Dataset2022\\Depth0\\' + rate + '_META\\'
 
 
 
-                # Reading either 56 views or 81 views depending on selected methodology
-                Record=LoadFiftySixViewsDepth0(TotLF, ctuPath, metaPath, rate, PRINT_STATUS, METHODOLOGY, DB)
-                Record_Rates.extend(Record)
+            # Reading either 56 views or 81 views depending on selected methodology
+            Record=LoadFiftySixViewsDepth0(TotLF, ctuPath, metaPath, rate, PRINT_STATUS, METHODOLOGY, DB)
+            Record_Rates.extend(Record)
             # FROM HERE SELECT DOWN TILL "TO HERE" AND PRESS SHIFT TAB TAB FOR COMBINED RATE
             # PRESS TAB TAB AFTER SELECTING FOR INDEPENDENT RATES
             rate1Df = pd.DataFrame(np.array(Record_Rates),
@@ -126,19 +104,6 @@ def Depth0_CNN(loopidx,CTU_FLAG,MOTION_FLAG,CTU_NN_FLAG,rate_list,DBlist,PRINT_S
             validate_df = rate1Df[rate1Df['LFname'].isin(randomTestData)]
             train_df = train_df.reset_index(drop=True)  # this reset the list so that it start from 0 to its end
             validate_df = validate_df.reset_index(drop=True)  # this reset the list so that it start from 0 to its e
-
-            # For accuracy score preds and validate
-            preds = [1] * len(validate_df['CurrSL'])
-            score = accuracy_score(validate_df['CurrSL'].astype(int),preds)
-            print(f' Accuracy Score for split is {score}')
-
-            preds2 = [0] * len(validate_df['CurrSL'])
-            print('Precision is: ', precision_score(validate_df['CurrSL'].astype(int),preds2))
-            print('Recall is: ', recall_score(validate_df['CurrSL'].astype(int),preds2))
-
-            tn, fp, fn, tp = confusion_matrix(validate_df['CurrSL'].astype(int), preds).ravel()
-            print('True negatives: ', tn, '\nFalse positives: ', fp, '\nFalse negatives: ', fn, '\nTrue Positives: ',
-                  tp)
 
             # Stats of Test and Train data
             if(PRINT_STATS):
@@ -186,8 +151,8 @@ def Depth0_CNN(loopidx,CTU_FLAG,MOTION_FLAG,CTU_NN_FLAG,rate_list,DBlist,PRINT_S
                                        y_col={'type': 'CurrSL'},
                                        batch_size=batch_size, input_size=IMAGE_SIZE)
             else:
-                inputgenerator = generate_generator_FastCoding(train_datagen, train_df,IMAGE_SIZE,CTU_FLAG,CTU_NN_FLAG,MOTION_FLAG,CTU_NN_Rate_Prev,rate)
-                testgenerator = generate_generator_FastCoding(valid_datagen, validate_df,IMAGE_SIZE,CTU_FLAG,CTU_NN_FLAG,MOTION_FLAG,CTU_NN_Rate_Prev,rate)
+                inputgenerator = generate_generator_FastCoding(train_datagen, train_df,IMAGE_SIZE,CTU_FLAG,CTU_NN_FLAG, MOTION_FLAG,batch_size)
+                testgenerator = generate_generator_FastCoding(valid_datagen, validate_df,IMAGE_SIZE,CTU_FLAG,CTU_NN_FLAG,MOTION_FLAG,batch_size)
 
             # *******************************  [Network Defination]  **********************************
 
@@ -199,18 +164,11 @@ def Depth0_CNN(loopidx,CTU_FLAG,MOTION_FLAG,CTU_NN_FLAG,rate_list,DBlist,PRINT_S
 
             rate_input = Input(shape=rate_input_shape)
             img_input_shape= (64,64,1) # The input CTU is 64x64
-            # To check generator
-            # x,y=next(inputgenerator)
-            # print(x[0].shape)
-            # Selection of ML scheme for prediction of non key views
+
 
             if (CTU_NN_FLAG):  # CTU + Feature vector case
                 # print('WARNING: Feature vector is all zeros')
                 z,InpArray=Basic_NN_CTU_FV_D0(img_input_shape, rate_input) # Basic NN CTU + Feature vector case
-            elif CTU_NN_Rate_Prev:
-                rate_input_shape = (1,)
-                rate_input = Input(shape=rate_input_shape)
-                z, InpArray = Basic_NN_CTU_rate(img_input_shape, rate_input)
             elif (CTU_FLAG):# CTU only case
                 img_input_shape = (64, 64, 1)
                 z,InpArray=Basic_NN_CTU_D0(img_input_shape) # Basic NN CTU only case
@@ -242,7 +200,7 @@ def Depth0_CNN(loopidx,CTU_FLAG,MOTION_FLAG,CTU_NN_FLAG,rate_list,DBlist,PRINT_S
             # Flags used in paper
             # FLAGS_VALUE = 'Rate_' + rate + '_TEST_' + TestInfo + '_FLAGS_' + str(CTU_FLAG) + '_' + str(CTU_NN_FLAG)
             # Flags used to add model
-            FLAGS_VALUE= 'Rate_'+ rate+ '_TEST_'+ TestInfo + '_FLAGS_' + str(CTU_FLAG) +'_'+  str(CTU_NN_FLAG)+'_'+str(CTU_NN_Rate_Prev)
+            FLAGS_VALUE= 'Rate_'+ rate+ '_TEST_'+ TestInfo + '_FLAGS_' + str(CTU_FLAG) +'_'+  str(CTU_NN_FLAG)
 
             modelPath = pathDrive + FLAGS_VALUE + '_model_val_acc_best.h5'
 

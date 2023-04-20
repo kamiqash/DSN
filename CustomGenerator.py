@@ -1,8 +1,8 @@
 import numpy as np
 import tensorflow as tf
 
-def generate_generator_FastCoding(generator, inputdf, IMAGE_SIZE, CTU_FLAG, CTU_NN_FLAG, MOTION_FLAG,CTU_NN_Rate_Prev,rate):
-    batch_size = 32
+def generate_generator_FastCoding(generator, inputdf, IMAGE_SIZE, CTU_FLAG, CTU_NN_FLAG, MOTION_FLAG,batch_size):
+    batch_size = batch_size
     genX1 = generator.flow_from_dataframe(
         inputdf,
         "../",
@@ -232,18 +232,7 @@ def generate_generator_FastCoding(generator, inputdf, IMAGE_SIZE, CTU_FLAG, CTU_
 
         if (CTU_NN_FLAG):
             yield [X1i, VecData], y1  # CTU + CNN + Dense
-        elif CTU_NN_Rate_Prev:
-            yield [X1i, y10nx], y1
         elif (CTU_FLAG):
-            # Tried to append rate as a tensor in CNN for better learning, not good results
-            # qpmatrix = np.full((batch_size, 64, 64, 1), (int(rate) / 50))
-            # darray = np.concatenate((X1i, qpmatrix), axis=3)
-            # yield darray, y1
-            # Another Try where concatenating rate + previous layer tensors
-            # rateValue = (int(rate) - 8) / (45 - 8)
-            # VecData = np.array(y10nx)
-
-
             yield X1i, y1  # CNN only
         else:
             yield VecData, y1  # Feature vector only
