@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 import os
 
-#waqas 16:30
+# Author: Kamran Qureshi & Waqas Ahmad, Date: 04-21-23
 
 isColab = False
 
@@ -20,13 +20,9 @@ sz1 = 256
 
 
 SingleFolderDepthWisePred=1
-# CodeforUpload_FULLLF
-# DNN_Rate_by_Rate #Used for validating DNN_15_02_2022
+
 outputDNNFolder= 'FullLF_RateByRate'
-# MergedViews_DNN_RateByRate
 outputFolderMergedViews = 'MergedViews_FullLF_RateByRate'
-# SingleFolderPath='../../output/DNN_For_BDPSNR_21022022/MergedTestTrainVer4/'
-# SingleFolderPath='../../output/DNN_For_BDPSNR/MergedTestTrainVer4/'
 SingleFolderPath='../../output/' + outputDNNFolder + '/' + outputFolderMergedViews + '/'
 if not os.path.exists(SingleFolderPath):
     os.makedirs(SingleFolderPath)
@@ -47,9 +43,7 @@ rateList=['22','27','32']
 TEST_Array=['A','B','C']
 
 BDPSNR=1
-# outputDNNFolder='DNN_For_BDPSNR_21022022'
-# outputDNNFolder='DNN_For_BDPSNR'
-# outputDNNFolder= 'CodeforUpload_FULLLF'
+
 
 if(BDPSNR):
     randomTestData_22 = [  ['14', '23', '28'],['4', '10', '13'],['5', '7', '16'] ]

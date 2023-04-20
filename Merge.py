@@ -4,29 +4,20 @@ from os import path
 from os.path import exists
 from merge_depths_files import depth_merge
 
-# basepath = "/content/drive/MyDrive/FastCodingFramework/MergedTestTrainVer4/"
-# output_path = "/content/drive/MyDrive/FastCodingFramework/MergedResults/"
-# outputDNNFolder = 'DNN_For_BDPSNR' #Used for 56 views
-# CodeforUpload_FULLLF  #Results reported in FastCodingPaper_Sensor_v2_DrTehseen (Overleaf)
-# DNN_Rate_by_Rate
-# FullLF_RateByRate
+
 outputDNNFolder= 'FullLF_RateByRate'
-# inputFolderMergedDepths = 'MergedResults' #Used for 56 views
-# MergedResults_FULLLF
-# MergedDepths_DNN_RateByRate
+
 OutputFolderMergedDepths = 'MergedDepths_FullLF_RateByRate'
-# MergedTestTrainVer_FULLLFCTU
-# MergedViews_DNN_RateByRate
-# MergedViews_FullLF_RateByRate
+
 InputFolderMergedViews = 'MergedViews_FullLF_RateByRate'
-# basepath = '../../output/' + outputDNNFolder + '/MergedTestTrainVer4/'
+
 basepath = '../../output/' + outputDNNFolder + '/' + InputFolderMergedViews + '/'
 output_path = '../../output/' + outputDNNFolder + '/' + OutputFolderMergedDepths + '/'
 if not os.path.exists(output_path):
     os.makedirs(output_path)
 
 test = ["A","B","C"]
-#LF_image = [14,23,28]
+
 rate = [22,27,32]
 #test = ["B"]
 #rate = [22]

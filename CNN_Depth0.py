@@ -3,7 +3,6 @@ from keras.models import Model
 from keras.layers import Input, Concatenate
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, Callback
 import random
-#changed 09 Nov 2022
 import os
 import numpy as np
 import time
@@ -12,11 +11,6 @@ from keras.preprocessing.image import ImageDataGenerator
 import pandas as pd
 
 import tensorflow as tf
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import precision_score, recall_score
-from sklearn.metrics import confusion_matrix
-
-from sklearn.metrics import f1_score
 from CustomGenerator import generate_generator_FastCoding
 from CustomGenerator import MultiChannelDataGen
 
@@ -167,7 +161,6 @@ def Depth0_CNN(loopidx,CTU_FLAG,MOTION_FLAG,CTU_NN_FLAG,rate_list,DBlist,PRINT_S
 
 
             if (CTU_NN_FLAG):  # CTU + Feature vector case
-                # print('WARNING: Feature vector is all zeros')
                 z,InpArray=Basic_NN_CTU_FV_D0(img_input_shape, rate_input) # Basic NN CTU + Feature vector case
             elif (CTU_FLAG):# CTU only case
                 img_input_shape = (64, 64, 1)

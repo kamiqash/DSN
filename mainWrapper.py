@@ -1,8 +1,7 @@
 # This file contain the main function of the framework
 # This function is the wrapper that runs First part of Framework which includes Loading of Datasets(depth 0,1 and 2)
 # Then it evaluate different variance of the proposed ML Scheme. The trained network and summary is stored in the specifed folder.
-# Author: Waqas ahmad and Kamran Qureshi
-# Date: 20-04-2022
+# Author: Kamran Qureshi & Waqas Ahmad, Date: 04-21-23
 
 #from PIL import Image as pil_image
 # Reading function define in other python file
